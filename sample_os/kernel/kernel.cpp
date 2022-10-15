@@ -12,7 +12,7 @@
 #endif
 
 //Hardware text mode color constants
-enum class vga_color {
+enum class vga_color : int {
     VGA_COLOR_BLACK = 0,
 	VGA_COLOR_BLUE = 1,
 	VGA_COLOR_GREEN = 2,
@@ -49,3 +49,62 @@ size_t strlen(const char* str) {
 static const size_t VGA_WIDTH {80};
 static const size_t VGA_HEIGHT {25};
 
+size_t terminal_row{};
+size_t terminal_column{};
+uint8_t terminal_color{};
+uint16_t* terminal_buffer{};
+
+void terminal_initialize() {
+    terminal_color = vga_entry_color(vga_color::VGA_COLOR_LIGHT_GREY, vga_color::VGA_COLOR_BLACK);
+    terminal_buffer = (uint16_t*) 0xB8000; // VGA text mode buffer
+    for(size_t y{}; y < VGA_HEIGHT; ++y) {
+        for(size_t x{}; x < VGA_WIDTH; ++x) {
+            const size_t index = y * VGA_WIDTH + x;
+            terminal_buffer[index] = vga_entry(' ', terminal_color);
+        }
+    }
+}
+
+void terminal_setcolor(uint8_t color) {
+    terminal_color = color;
+}
+
+void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
+    const size_t index = y * VGA_WIDTH + x;
+    terminal_buffer[index] = vga_entry(c, color);
+}
+
+void terminal_putchar(char c) {
+    terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
+    if(++terminal_column == VGA_WIDTH) { //reset column(x) if it overflows
+        terminal_column = 0;
+        if(++terminal_row == VGA_HEIGHT) { //same here
+            terminal_row = 0;
+        }
+    }
+}
+
+void terminal_write(const char* data, size_t size) {
+    for(size_t i{}; i < size; ++i) {
+        char c = data[i];
+        if(c == '\n') {
+            terminal_column = 0;
+            if(++terminal_row == VGA_HEIGHT) {
+                terminal_row = 0;
+            }
+        }
+        else terminal_putchar(c);
+    }
+}
+
+void terminal_writestring(const char* data) {
+    terminal_write(data, strlen(data));
+}
+
+extern "C" void kernel_main() {
+    //init terminal interface
+    terminal_initialize();
+
+    //newline support TODO
+    terminal_writestring("Hello, kernel World!\n");
+}
