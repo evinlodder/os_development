@@ -53,7 +53,7 @@ _start:
 	should be enabled here. C++ features such as global constructors and
 	exceptions will require runtime support to work as well.
 	*/
-
+	call _init
 	/*Enter the high-level kernel. The ABI requires the stack is 16-byte
 	aligned at the time of the call instruction (which afterwards pushes the
 	return pointer of size 4 bytes). The stack was originally 16-byte aligned
@@ -63,6 +63,7 @@ _start:
 	*/
 	call kernel_main
 
+	call _fini
 	/*
 	if the system has nothing more to do, put the computer into an infinite
 	loop. to do that:
@@ -75,9 +76,10 @@ _start:
 	3. Jump to the hlt instruction if it ever wakes up due to a non-maskable
 	   interrupt occuring or due to system management mode.
 	*/
+
 	cli
 1:      hlt
-	jmp 1b
+	jmp 1b	
 /*
 Set the size of the _start symbol to the current location '.' minus its start.
 This is useful when debugging or when you impl call tracing.
