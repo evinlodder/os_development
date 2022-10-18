@@ -1,0 +1,16 @@
+#!/usr/bin/bash
+
+echo "Running QEMU..."
+
+if [ "$1" = "k" ] || [ $# -eq 0 ]; then
+	QEMU_OUTPUT="$(qemu-system-i386 -kernel $(pwd)/myos.bin)"
+else
+	QEMU_OUTPUT="$(qemu-system-i386 -cdrom $(pwd)/myos.iso)"
+fi
+
+if [ $? -eq 1 ]; then
+	echo QEMU_OUTPUT
+	echo "QEMU failed."
+	exit 1
+fi
+

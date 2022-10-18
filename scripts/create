@@ -1,0 +1,70 @@
+#!/usr/bin/bash
+
+if [ "$1" = "c" ]; then
+	FILE_NAME=kernel.c
+	GCC_EXT=cc
+elif [ "$1" = "cpp" ]; then
+	FILE_NAME=kernel.cpp
+	GCC_EXT=++
+else
+	echo "$1 is not c or cpp!"
+	exit 1
+fi
+
+FILE="$(pwd)/$FILE_NAME"
+
+if ! [ -f "$FILE" ]; then
+	echo "$FILE doesn't exist."
+	exit 1
+fi
+
+if [ "$1" = "c" ]; then
+	GCC_OUTPUT=$(i686-elf-gcc -c $FILE -o kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra)
+elif [ "$1" = "cpp" ]; then
+	GCC_OUTPUT=$(i686-elf-g++ -c $FILE -o kernel.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti)
+fi
+
+if [ $? -eq 1 ]; then
+	echo $GCC_OUTPUT
+	echo "$FILE_NAME compile failed."
+	exit 1
+else
+	echo "$FILE_NAME compiled..."
+fi
+
+BOOT_FILE="$(pwd)/boot.s"
+LINKER_FILE="$(pwd)/linker.ld"
+
+if ! [ -f "$BOOT_FILE" ]; then
+	echo "$BOOT_FILE not found."
+fi
+if ! [ -f "$LINKER_FILE" ]; then
+	echo "$LINKER_FILE not found."
+fi
+
+BOOT_OUTPUT=$(i686-elf-as $BOOT_FILE -o boot.o)
+if [ $? -eq 1 ]; then
+	echo $BOOT_OUTPUT
+	echo "boot.s compile failed."
+	exit 1
+else
+	echo "boot.s compiled..."
+fi
+
+DIR=$(pwd)
+LINK_OUTPUT=$(i686-elf-g$GCC_EXT -T $LINKER_FILE -o myos.bin -ffreestanding -O2 -nostdlib $DIR/boot.o $DIR/kernel.o -lgcc)
+if [ $? -eq 1 ]; then
+	echo $LINK_OUTPUT
+	echo "linking failed."
+	exit 1
+else
+	echo "linking successful!"
+fi
+
+echo "Verifying multiboot..."
+
+if grub-file --is-x86-multiboot myos.bin; then
+	echo Multiboot confirmed!
+else
+	echo myos.bin is not multiboot!
+fi

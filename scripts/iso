@@ -1,0 +1,33 @@
+#!/usr/bin/bash
+
+echo "Copying myos.bin..."
+DIR="$(pwd)"
+CP_OUT_1="$(cp $DIR/myos.bin $DIR/isodir/boot/myos.bin)"
+
+if [ $? -eq 1 ]; then
+	echo CP_OUT_1
+	echo "Failed to copy myos.bin."
+	exit 1
+fi
+
+echo "Copying grub.cfg..."
+
+CP_OUT_2="$(cp $DIR/grub.cfg $DIR/isodir/boot/grub/grub.cfg)"
+
+if [ $? -eq 1 ]; then
+	echo CP_OUT_2
+	echo "Failed to copy grub.cfg."
+	exit 1
+fi
+
+echo "Making myos.iso..."
+
+GRUB_OUT="$(grub-mkrescue -o $DIR/myos.iso $DIR/isodir)"
+
+if [ $? -eq 1 ]; then
+	echo GRUB_OUT
+	echo "Failed to create myos.iso."
+	exit 1
+fi
+
+echo "Successfully created myos.iso."
