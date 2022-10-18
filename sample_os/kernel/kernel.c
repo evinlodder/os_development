@@ -54,7 +54,7 @@ size_t terminal_column;
 uint8_t terminal_color;
 uint16_t* terminal_buffer;
 
-void terminal_initialize() {
+void terminal_initialize(void) {
     terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
     terminal_buffer = (uint16_t*) 0xB8000; // VGA text mode buffer
     for(size_t y = 0; y < VGA_HEIGHT; ++y) {
@@ -74,6 +74,9 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
     terminal_buffer[index] = vga_entry(c, color);
 }
 
+void scroll_terminal(void) {
+    
+}
 void terminal_putchar(char c) {
     terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
     if(++terminal_column == VGA_WIDTH) { //reset column(x) if it overflows
@@ -103,7 +106,8 @@ void terminal_writestring(const char* data) {
     terminal_write(data, strlen(data));
 }
 
-void kernel_main() {
+
+void kernel_main(void) {
     //init terminal interface
     terminal_initialize();
 
