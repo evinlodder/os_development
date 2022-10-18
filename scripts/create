@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+DIR=$(pwd)
+
 if [ "$1" = "c" ]; then
 	FILE_NAME=kernel.c
 	GCC_EXT=cc
@@ -11,7 +13,7 @@ else
 	exit 1
 fi
 
-FILE="$(pwd)/$FILE_NAME"
+FILE="$DIR/$FILE_NAME"
 
 if ! [ -f "$FILE" ]; then
 	echo "$FILE doesn't exist."
@@ -19,9 +21,9 @@ if ! [ -f "$FILE" ]; then
 fi
 
 if [ "$1" = "c" ]; then
-	GCC_OUTPUT=$(i686-elf-gcc -c $FILE -o kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra)
+	GCC_OUTPUT=$(sudo i686-elf-gcc -c $FILE -o kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra)
 elif [ "$1" = "cpp" ]; then
-	GCC_OUTPUT=$(i686-elf-g++ -c $FILE -o kernel.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti)
+	GCC_OUTPUT=$(sudo i686-elf-g++ -c $FILE -o kernel.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti)
 fi
 
 if [ $? -eq 1 ]; then
@@ -32,17 +34,30 @@ else
 	echo "$FILE_NAME compiled..."
 fi
 
-BOOT_FILE="$(pwd)/boot.s"
-LINKER_FILE="$(pwd)/linker.ld"
+BOOT_FILE="$DIR/boot.s"
+LINKER_FILE="$DIR/linker.ld"
+CRTI_FILE="$DIR/crti.s"
+CRTN_FILE="$DIR/crtn.s"
 
 if ! [ -f "$BOOT_FILE" ]; then
 	echo "$BOOT_FILE not found."
+	exit 1
 fi
 if ! [ -f "$LINKER_FILE" ]; then
 	echo "$LINKER_FILE not found."
+	exit 1
+fi
+if ! [ -f "$CRTI_FILE" ]; then
+	echo "$CRTI_FILE not found."
+	exit 1
+fi
+if ! [ -f "$CRTN_FILE" ]; then
+	echo "$CRTN_FILE not found."
+	exit 1
 fi
 
-BOOT_OUTPUT=$(i686-elf-as $BOOT_FILE -o boot.o)
+
+BOOT_OUTPUT=$(sudo i686-elf-as $BOOT_FILE -o boot.o)
 if [ $? -eq 1 ]; then
 	echo $BOOT_OUTPUT
 	echo "boot.s compile failed."
@@ -51,8 +66,36 @@ else
 	echo "boot.s compiled..."
 fi
 
-DIR=$(pwd)
-LINK_OUTPUT=$(i686-elf-g$GCC_EXT -T $LINKER_FILE -o myos.bin -ffreestanding -O2 -nostdlib $DIR/boot.o $DIR/kernel.o -lgcc)
+CRTI_OUTPUT=$(sudo i686-elf-as $CRTI_FILE -o crti.o)
+if [ $? -eq 1 ]; then
+	echo $CRTI_OUTPUT
+	echo "crti.s compile failed"
+	exit 1
+else
+	echo "crti.s compiled..."
+fi
+
+CRTN_OUTPUT=$(sudo i686-elf-as $CRTN_FILE -o crtn.o)
+if [ $? -eq 1 ]; then
+	echo $CRTO_OUTPUT
+	echo "crtn.s compile failed"
+	exit 1
+else
+	echo "crtn.s compiled..."
+fi
+
+CRTBEG_FILE="$(sudo i686-elf-g$GCC_EXT $$CFLAGS -print-file-name=crtbegin.o)"
+if [ $? -eq 1 ]; then
+	echo $CRTBEG_FILE
+	exit 1
+fi
+CRTEND_FILE="$(sudo i686-elf-g$GCC_EXT $$CFLAGS -print-file-name=crtend.o)"
+if [ $? -eq 1 ]; then
+	echo $CRTEND_FILE
+	exit 1
+fi
+
+LINK_OUTPUT=$(sudo i686-elf-g$GCC_EXT -T $LINKER_FILE -o myos.bin -ffreestanding -O2 -nostdlib $DIR/boot.o $DIR/crti.o $CRTBEG_FILE $DIR/kernel.o $CRTEND_FILE $DIR/crtn.o -lgcc)
 if [ $? -eq 1 ]; then
 	echo $LINK_OUTPUT
 	echo "linking failed."
