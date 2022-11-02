@@ -2,7 +2,10 @@
 
 #include <kernel/tty.h>
 
+#ifdef __cplusplus
+extern "C"
+#endif
 void kernel_main(void) {
-	terminal_initialize();
+    terminal_initialize();
 	printf("Hello, kernel World!\n");
 }
