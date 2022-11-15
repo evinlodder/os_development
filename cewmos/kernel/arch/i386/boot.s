@@ -1,50 +1,52 @@
-# Declare constants for the multiboot header.
-.set ALIGN,    1<<0             # align loaded modules on page boundaries
-.set MEMINFO,  1<<1             # provide memory map
-.set FLAGS,    ALIGN | MEMINFO  # this is the Multiboot 'flag' field
-.set MAGIC,    0x1BADB002       # 'magic number' lets bootloader find the header
-.set CHECKSUM, -(MAGIC + FLAGS) # checksum of above, to prove we are multiboot
+.include "arch/i386/setup.s"
 
-.section .multiboot
-.align 4
-.long MAGIC
-.long FLAGS
-.long CHECKSUM
-
-# Reserve a stack for the initial thread.
-.section .bss
-.align 16
-stack_bottom:
-.skip 16384 # 16 KiB
-stack_top:
-
-# The kernel entry point.
 .section .text
-.global _start
-.type _start, @function
-_start:
-	movl $stack_top, %esp
-	# Set up paging
-	# mov eax, page_directory
-	# mov cr3, eax
 
-	# mov eax, cr0
-	# or eax, 0x80000001
-	# mov cr0, eax
+4:
+	# At this point, paging is fully set up and enabled.
 
-	# enable PSE
-	# mov eax, cr4
-	# or eax, 0x00000010
-	# mov cr4, eax
+	# Unmap the identity mapping as it is now unnecessary.
+	movl $0, boot_page_directory + 0
 
-	# Call the global constructors.
-	call _init
+	# Reload crc3 to force a TLB flush so the changes to take effect.
+	movl %cr3, %ecx
+	movl %ecx, %cr3
 
-	# Transfer control to the main kernel.
+	# Set up the stack.
+	mov $stack_top, %esp
+
+	# clear interrupts for gdt
+	cli
+	# set up GDT
+	xor %ax, %ax
+	mov %ax, %ds
+	lgdt (gdt_descriptor)
+	# set CR0 to 1
+	mov %cr0, %eax
+	or $1, %eax
+	mov %eax, %cr0 # now in 32-bit protected mode
+ 	# long jump to protected mode
+	ljmp $code_segment, $start_protected_mode
+
+	#[bits 32]
+	start_protected_mode:
+ 	# reload registers
+	mov $data_segment, %ax
+	mov %ax, %ds
+	mov %ax, %ss
+	mov %ax, %es
+	mov %ax, %fs
+	mov %ax, %gs
+
+#					      #
+# GDT IS SET UP, WE ARE NOW IN PROTECTED MODE #
+#					      #
+	# Set up system, things like IDT
+	call system_setup
+
+	# Enter the high-level kernel.
 	call kernel_main
 
-	# Hang if kernel_main unexpectedly returns.
-	cli
+	# Infinite loop if the system has nothing more to do.
 1:	hlt
 	jmp 1b
-.size _start, . - _start

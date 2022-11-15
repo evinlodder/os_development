@@ -75,6 +75,7 @@ install: install-headers install-kernel
 install-headers:
 	mkdir -p $(DESTDIR)$(INCLUDEDIR)
 	cp -R --preserve=timestamps include/. $(DESTDIR)$(INCLUDEDIR)/.
+	echo "done installing headers"
 
 install-kernel: cewmos.kernel
 	mkdir -p $(DESTDIR)$(BOOTDIR)

@@ -1,11 +1,13 @@
 #include <stdio.h>
-
+#include <kernel/system.h>
 #include <kernel/tty.h>
 
-#ifdef __cplusplus
-extern "C"
-#endif
-void kernel_main(void) {
+EXTERN void kernel_main(VOID) {
     terminal_initialize();
-	printf("Hello, kernel World!\n");
+	printf("Hello, kernel World!\nI love coding <3");
+}
+
+EXTERN void system_setup(VOID) {
+    //set up IDT
+
 }
