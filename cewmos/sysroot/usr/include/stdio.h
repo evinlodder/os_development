@@ -12,6 +12,7 @@ extern "C" {
 int printf(const char* __restrict__, ...);
 int putchar(int);
 int puts(const char*);
+void clear_screen(void);
 
 #ifdef __cplusplus
 }

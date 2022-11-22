@@ -2,6 +2,9 @@
 
 .section .text
 
+.include "arch/i386/interrupts.s"
+.include "arch/i386/idt.s"
+
 4:
 	# At this point, paging is fully set up and enabled.
 
@@ -42,6 +45,8 @@
 # GDT IS SET UP, WE ARE NOW IN PROTECTED MODE #
 #					      #
 	# Set up system, things like IDT
+
+
 	call system_setup
 
 	# Enter the high-level kernel.

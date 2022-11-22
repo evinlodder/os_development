@@ -1,7 +1,7 @@
 #include <kernel/pic.h>
 #include <kernel/hio.h>
 //remapping is necessary since the original mappings are first 8 and last 8 in IDT, instead of just first 16
-void kernel::pic::remap_pic(uint32_t pic1, uint32_t pic2) {
+EXTERN void kernel::pic::remap_pic(uint32_t pic1, uint32_t pic2) {
     using namespace kernel::hio;
 
     byte md{}, sd{};
@@ -26,7 +26,7 @@ void kernel::pic::remap_pic(uint32_t pic1, uint32_t pic2) {
 	out_port_b(SLAVEDATA, sd);                     // restore SLAVE DATA
 }
 
-void kernel::pic::mask_irq(byte irq) {
+EXTERN void kernel::pic::mask_irq(byte irq) {
     using namespace kernel::hio;
     if(irq==ALL)
 	{
@@ -43,7 +43,8 @@ void kernel::pic::mask_irq(byte irq) {
 	}
 }
 
-void kernel::pic::unmask_irq(byte irq) {
+EXTERN void kernel::pic::unmask_irq(byte irq) {
+    using namespace kernel::hio;
     if(irq==ALL)
 	{
 		out_port_b(MASTERDATA,0x00);

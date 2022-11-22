@@ -6,9 +6,9 @@
 namespace kernel { namespace hio {
 #endif //__cplusplus
 
-inline void out_port_b(uint32_t port, byte value);
-inline void out_port_w(uint32_t port, uint32_t value);
-inline byte in_port_b(uint32_t port);
+EXTERN void out_port_b(uint32_t port, byte value);
+EXTERN void out_port_w(uint32_t port, uint32_t value);
+EXTERN byte in_port_b(uint32_t port);
 
 #ifdef __cplusplus
 }}
