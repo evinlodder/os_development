@@ -50,6 +50,7 @@ namespace kernel { namespace pic {
 EXTERN void remap_pic(uint32_t pic1, uint32_t pic2);
 EXTERN void mask_irq(byte irq);
 EXTERN void unmask_irq(byte irq);
+EXTERN void send_eoi(byte irq);
 
 #ifdef __cplusplus
 }}

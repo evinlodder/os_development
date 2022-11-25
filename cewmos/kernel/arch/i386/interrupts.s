@@ -471,8 +471,9 @@ _int21:
  # END OF EXCEPTION INTERRUPTS. 32-255 CAN BE WHATEVER YOU WANT
  #
 
-.global _int32
-_int32:
+ # INTERRUPTS 32-47 ARE IRQs 0-15
+.global _irq00
+_irq00:
  pusha
  push %gs
  push %fs
@@ -484,7 +485,7 @@ _int32:
  cld
 
  # do what you want to here :)
- call testint
+ call irq_00
 
  pop %ds
  pop %es
@@ -492,3 +493,337 @@ _int32:
  pop %gs
  popa
  iret
+
+.global _irq01
+_irq01:
+ pusha
+ push %gs
+ push %fs
+ push %es
+ push %ds
+ mov $0x10, %eax
+ mov %eax, %es
+ mov %eax, %ds
+ cld
+
+ # do what you want to here :)
+ call irq_01
+
+ pop %ds
+ pop %es
+ pop %fs
+ pop %gs
+ popa
+ iret
+
+.global _irq02
+_irq02:
+ pusha
+ push %gs
+ push %fs
+ push %es
+ push %ds
+ mov $0x10, %eax
+ mov %eax, %es
+ mov %eax, %ds
+ cld
+
+ # do what you want to here :)
+ call irq_02
+
+ pop %ds
+ pop %es
+ pop %fs
+ pop %gs
+ popa
+ iret
+
+.global _irq03
+_irq03:
+ pusha
+ push %gs
+ push %fs
+ push %es
+ push %ds
+ mov $0x10, %eax
+ mov %eax, %es
+ mov %eax, %ds
+ cld
+
+ # do what you want to here :)
+ call irq_03
+
+ pop %ds
+ pop %es
+ pop %fs
+ pop %gs
+ popa
+ iret
+
+.global _irq04
+_irq04:
+ pusha
+ push %gs
+ push %fs
+ push %es
+ push %ds
+ mov $0x10, %eax
+ mov %eax, %es
+ mov %eax, %ds
+ cld
+
+ # do what you want to here :)
+ call irq_04
+
+ pop %ds
+ pop %es
+ pop %fs
+ pop %gs
+ popa
+ iret
+
+.global _irq05
+_irq05:
+ pusha
+ push %gs
+ push %fs
+ push %es
+ push %ds
+ mov $0x10, %eax
+ mov %eax, %es
+ mov %eax, %ds
+ cld
+
+ # do what you want to here :)
+ call irq_05
+
+ pop %ds
+ pop %es
+ pop %fs
+ pop %gs
+ popa
+ iret
+
+.global _irq06
+_irq06:
+ pusha
+ push %gs
+ push %fs
+ push %es
+ push %ds
+ mov $0x10, %eax
+ mov %eax, %es
+ mov %eax, %ds
+ cld
+
+ # do what you want to here :)
+ call irq_06
+
+ pop %ds
+ pop %es
+ pop %fs
+ pop %gs
+ popa
+ iret
+
+.global _irq07
+_irq07:
+ pusha
+ push %gs
+ push %fs
+ push %es
+ push %ds
+ mov $0x10, %eax
+ mov %eax, %es
+ mov %eax, %ds
+ cld
+
+ # do what you want to here :)
+ call irq_07
+
+ pop %ds
+ pop %es
+ pop %fs
+ pop %gs
+ popa
+ iret
+
+.global _irq08
+_irq08:
+ pusha
+ push %gs
+ push %fs
+ push %es
+ push %ds
+ mov $0x10, %eax
+ mov %eax, %es
+ mov %eax, %ds
+ cld
+
+ # do what you want to here :)
+ call irq_08
+
+ pop %ds
+ pop %es
+ pop %fs
+ pop %gs
+ popa
+ iret
+
+.global _irq09
+_irq09:
+ pusha
+ push %gs
+ push %fs
+ push %es
+ push %ds
+ mov $0x10, %eax
+ mov %eax, %es
+ mov %eax, %ds
+ cld
+
+ # do what you want to here :)
+ call irq_09
+
+ pop %ds
+ pop %es
+ pop %fs
+ pop %gs
+ popa
+ iret
+
+.global _irq10
+_irq10:
+ pusha
+ push %gs
+ push %fs
+ push %es
+ push %ds
+ mov $0x10, %eax
+ mov %eax, %es
+ mov %eax, %ds
+ cld
+
+ # do what you want to here :)
+ call irq_10
+
+ pop %ds
+ pop %es
+ pop %fs
+ pop %gs
+ popa
+ iret
+
+.global _irq11
+_irq11:
+ pusha
+ push %gs
+ push %fs
+ push %es
+ push %ds
+ mov $0x10, %eax
+ mov %eax, %es
+ mov %eax, %ds
+ cld
+
+ # do what you want to here :)
+ call irq_11
+
+ pop %ds
+ pop %es
+ pop %fs
+ pop %gs
+ popa
+ iret
+
+.global _irq12
+_irq12:
+ pusha
+ push %gs
+ push %fs
+ push %es
+ push %ds
+ mov $0x10, %eax
+ mov %eax, %es
+ mov %eax, %ds
+ cld
+
+ # do what you want to here :)
+ call irq_12
+
+ pop %ds
+ pop %es
+ pop %fs
+ pop %gs
+ popa
+ iret
+
+.global _irq13
+_irq13:
+ pusha
+ push %gs
+ push %fs
+ push %es
+ push %ds
+ mov $0x10, %eax
+ mov %eax, %es
+ mov %eax, %ds
+ cld
+
+ # do what you want to here :)
+ call irq_13
+
+ pop %ds
+ pop %es
+ pop %fs
+ pop %gs
+ popa
+ iret
+
+.global _irq14
+_irq14:
+ pusha
+ push %gs
+ push %fs
+ push %es
+ push %ds
+ mov $0x10, %eax
+ mov %eax, %es
+ mov %eax, %ds
+ cld
+
+ # do what you want to here :)
+ call irq_14
+
+ pop %ds
+ pop %es
+ pop %fs
+ pop %gs
+ popa
+ iret
+
+.global _irq15
+_irq15:
+ pusha
+ push %gs
+ push %fs
+ push %es
+ push %ds
+ mov $0x10, %eax
+ mov %eax, %es
+ mov %eax, %ds
+ cld
+
+ # do what you want to here :)
+ call irq_15
+
+ pop %ds
+ pop %es
+ pop %fs
+ pop %gs
+ popa
+ iret
+
+# INTERRUPTS 48-255 ARE FREE
+
+

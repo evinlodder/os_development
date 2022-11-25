@@ -37,7 +37,22 @@ EXTERN void kernel::interrupts::load_interrupts(VOID) {
     set_interrupt(29, 0, selector, 0);
     set_interrupt(30, 0, selector, 0);
     set_interrupt(31, 0, selector, 0);
-
+    set_interrupt(32, _irq00, selector, PRESENT | RING_K | INT_GATE_32);
+    set_interrupt(33, _irq01, selector, PRESENT | RING_K | INT_GATE_32);
+    set_interrupt(34, _irq02, selector, PRESENT | RING_K | INT_GATE_32);
+    set_interrupt(35, _irq03, selector, PRESENT | RING_K | INT_GATE_32);
+    set_interrupt(36, _irq04, selector, PRESENT | RING_K | INT_GATE_32);
+    set_interrupt(37, _irq05, selector, PRESENT | RING_K | INT_GATE_32);
+    set_interrupt(38, _irq06, selector, PRESENT | RING_K | INT_GATE_32);
+    set_interrupt(39, _irq07, selector, PRESENT | RING_K | INT_GATE_32);
+    set_interrupt(40, _irq08, selector, PRESENT | RING_K | INT_GATE_32);
+    set_interrupt(41, _irq09, selector, PRESENT | RING_K | INT_GATE_32);
+    set_interrupt(42, _irq10, selector, PRESENT | RING_K | INT_GATE_32);
+    set_interrupt(43, _irq11, selector, PRESENT | RING_K | INT_GATE_32);
+    set_interrupt(44, _irq12, selector, PRESENT | RING_K | INT_GATE_32);
+    set_interrupt(45, _irq13, selector, PRESENT | RING_K | INT_GATE_32);
+    set_interrupt(46, _irq14, selector, PRESENT | RING_K | INT_GATE_32);
+    set_interrupt(47, _irq15, selector, PRESENT | RING_K | INT_GATE_32);
 }
 
 using namespace kernel::interrupts;
@@ -107,11 +122,72 @@ EXTERN void int_21(VOID) {
     panic("Control Protection Exception", "#CP", false);
 }
 
+// IRQ HANDLERS
 
+#include <kernel/pit.h>
+#include <kernel/pic.h>
+EXTERN void irq_00() {
+    //printf("\ntick");
+    kernel::pit::timer_handler();
+    kernel::pic::send_eoi(0);
+}
 
+EXTERN void irq_01() {
 
+}
 
+EXTERN void irq_02() {
 
+}
 
+EXTERN void irq_03() {
 
+}
 
+EXTERN void irq_04() {
+
+}
+
+EXTERN void irq_05() {
+
+}
+
+EXTERN void irq_06() {
+
+}
+
+EXTERN void irq_07() {
+
+}
+
+EXTERN void irq_08() {
+
+}
+
+EXTERN void irq_09() {
+
+}
+
+EXTERN void irq_10() {
+
+}
+
+EXTERN void irq_11() {
+
+}
+
+EXTERN void irq_12() {
+
+}
+
+EXTERN void irq_13() {
+
+}
+
+EXTERN void irq_14() {
+
+}
+
+EXTERN void irq_15() {
+
+}

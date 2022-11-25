@@ -27,7 +27,24 @@ EXTERN void _int18(VOID);
 EXTERN void _int19(VOID);
 EXTERN void _int20(VOID);
 EXTERN void _int21(VOID);
-EXTERN void _int32(VOID);
+
+EXTERN void _irq00(VOID);
+EXTERN void _irq01(VOID);
+EXTERN void _irq02(VOID);
+EXTERN void _irq03(VOID);
+EXTERN void _irq04(VOID);
+EXTERN void _irq05(VOID);
+EXTERN void _irq06(VOID);
+EXTERN void _irq07(VOID);
+EXTERN void _irq08(VOID);
+EXTERN void _irq09(VOID);
+EXTERN void _irq10(VOID);
+EXTERN void _irq11(VOID);
+EXTERN void _irq12(VOID);
+EXTERN void _irq13(VOID);
+EXTERN void _irq14(VOID);
+EXTERN void _irq15(VOID);
+
 
 EXTERN void load_interrupts(VOID);
 EXTERN void int_00(VOID);
@@ -51,6 +68,24 @@ EXTERN void int_18(VOID);
 EXTERN void int_19(VOID);
 EXTERN void int_20(VOID);
 EXTERN void int_21(VOID);
+
+EXTERN void irq_00(VOID);
+EXTERN void irq_01(VOID);
+EXTERN void irq_02(VOID);
+EXTERN void irq_03(VOID);
+EXTERN void irq_04(VOID);
+EXTERN void irq_05(VOID);
+EXTERN void irq_06(VOID);
+EXTERN void irq_07(VOID);
+EXTERN void irq_08(VOID);
+EXTERN void irq_09(VOID);
+EXTERN void irq_10(VOID);
+EXTERN void irq_11(VOID);
+EXTERN void irq_12(VOID);
+EXTERN void irq_13(VOID);
+EXTERN void irq_14(VOID);
+EXTERN void irq_15(VOID);
+
 #ifdef __cplusplus
 }}
 #endif

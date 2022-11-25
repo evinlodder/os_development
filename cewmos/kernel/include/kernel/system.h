@@ -9,6 +9,7 @@
 #include <kernel/adr.h>
 #include <kernel/gdt.h>
 #include <kernel/pic.h>
+#include <kernel/pit.h>
 
 #ifdef __cplusplus
 namespace kernel { namespace system {

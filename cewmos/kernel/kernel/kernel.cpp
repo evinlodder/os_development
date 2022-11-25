@@ -2,13 +2,13 @@
 #include <kernel/system.h>
 #include <kernel/tty.h>
 
-EXTERN void testint() {
-    printf("\nTEST INTERRUPT CALLED\n");
-}
+
 EXTERN void kernel_main(VOID) {
 
-	printf("Hello, kernel World!\nI love coding <3");
-    asm("int $10");
+	printf("starting 15 second timer...\n");
+    kernel::pit::sleep_s(15);
+    printf("15 seconds over!");
+
 }
 
 EXTERN void system_setup(VOID) {
@@ -17,10 +17,11 @@ EXTERN void system_setup(VOID) {
     kernel::system::enable_interrupts(false);
     kernel::pic::remap_pic(0x20, 0x28);
     kernel::pic::mask_irq(ALL);
+    kernel::pic::unmask_irq(TIMER);
 
     kernel::interrupts::load_interrupts();
 
-    kernel::idt::set_interrupt(48, kernel::interrupts::_int32, kernel::idt::get_cs(), PRESENT | RING_U | INT_GATE_32);
+    kernel::pit::timer_install(100);
 
     kernel::idt::load_idt();
 

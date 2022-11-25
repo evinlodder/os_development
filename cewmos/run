@@ -2,7 +2,7 @@
 set -e
 . ./iso.sh
 
-if [ "$1" -eq "gdb" ]; then
+if [ "$1" = "gdb" ]; then
     FLAGS="-s -S"
 else
     FLAGS=""

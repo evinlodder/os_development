@@ -59,3 +59,11 @@ EXTERN void kernel::pic::unmask_irq(byte irq) {
 			out_port_b(SLAVEDATA, irq>>8);
 	}
 }
+
+EXTERN void kernel::pic::send_eoi(byte irq) {
+    using namespace kernel::hio;
+    if(irq >= 8) {
+        out_port_b(SLAVE, EOI);
+    }
+    out_port_b(MASTER, EOI);
+}
