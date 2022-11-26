@@ -10,6 +10,7 @@
 #include <kernel/gdt.h>
 #include <kernel/pic.h>
 #include <kernel/pit.h>
+#include <kernel/keyboard.h>
 
 #ifdef __cplusplus
 namespace kernel { namespace system {

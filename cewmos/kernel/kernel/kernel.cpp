@@ -5,9 +5,6 @@
 
 EXTERN void kernel_main(VOID) {
 
-	printf("starting 15 second timer...\n");
-    kernel::pit::sleep_s(15);
-    printf("15 seconds over!");
 
 }
 
@@ -18,10 +15,12 @@ EXTERN void system_setup(VOID) {
     kernel::pic::remap_pic(0x20, 0x28);
     kernel::pic::mask_irq(ALL);
     kernel::pic::unmask_irq(TIMER);
+    kernel::pic::unmask_irq(KEYBOARD);
 
     kernel::interrupts::load_interrupts();
 
     kernel::pit::timer_install(100);
+    kernel::keyboard::install_us_qwerty_board();
 
     kernel::idt::load_idt();
 

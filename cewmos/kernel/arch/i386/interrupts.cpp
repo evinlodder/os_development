@@ -127,13 +127,14 @@ EXTERN void int_21(VOID) {
 #include <kernel/pit.h>
 #include <kernel/pic.h>
 EXTERN void irq_00() {
-    //printf("\ntick");
     kernel::pit::timer_handler();
     kernel::pic::send_eoi(0);
 }
 
+#include <kernel/keyboard.h>
 EXTERN void irq_01() {
-
+    kernel::keyboard::irq_handler();
+    kernel::pic::send_eoi(1);
 }
 
 EXTERN void irq_02() {
