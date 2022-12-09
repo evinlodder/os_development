@@ -45,6 +45,9 @@ EXTERN void _irq13(VOID);
 EXTERN void _irq14(VOID);
 EXTERN void _irq15(VOID);
 
+// USER-DEFINED INTERRUPTS
+EXTERN void _int48(VOID);
+
 
 EXTERN void load_interrupts(VOID);
 EXTERN void int_00(VOID);
@@ -86,6 +89,8 @@ EXTERN void irq_13(VOID);
 EXTERN void irq_14(VOID);
 EXTERN void irq_15(VOID);
 
+//USER-DEFINED INTERRUPT HANDLERS
+EXTERN void int_48(VOID);
 #ifdef __cplusplus
 }}
 #endif

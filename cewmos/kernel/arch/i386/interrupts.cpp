@@ -2,6 +2,7 @@
 #include <kernel/idt.h>
 #include <kernel/panic.h>
 #include <stdio.h>
+#include <kernel/keyboard.h>
 EXTERN void kernel::interrupts::load_interrupts(VOID) {
     using namespace kernel::idt;
     word selector = get_cs();
@@ -53,6 +54,9 @@ EXTERN void kernel::interrupts::load_interrupts(VOID) {
     set_interrupt(45, _irq13, selector, PRESENT | RING_K | INT_GATE_32);
     set_interrupt(46, _irq14, selector, PRESENT | RING_K | INT_GATE_32);
     set_interrupt(47, _irq15, selector, PRESENT | RING_K | INT_GATE_32);
+
+    //interrupt that receives keyboard packet
+    set_interrupt(48, _int48, selector, PRESENT | RING_2 | INT_GATE_32);
 }
 
 using namespace kernel::interrupts;
@@ -191,4 +195,10 @@ EXTERN void irq_14() {
 
 EXTERN void irq_15() {
 
+}
+
+//USER-DEFINED
+
+EXTERN void int_48() {
+    auto packet = kernel::keyboard::key_manager.current_packet; 
 }

@@ -826,4 +826,24 @@ _irq15:
 
 # INTERRUPTS 48-255 ARE FREE
 
+.global _int48
+_int48:
+ pusha
+ push %gs
+ push %fs
+ push %es
+ push %ds
+ mov $0x10, %eax
+ mov %eax, %es
+ mov %eax, %ds
+ cld
 
+ # do what you want to here :)
+ call int_48
+
+ pop %ds
+ pop %es
+ pop %fs
+ pop %gs
+ popa
+ iret

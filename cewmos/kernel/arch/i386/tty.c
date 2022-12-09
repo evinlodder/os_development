@@ -24,7 +24,7 @@ PUB void terminal_initialize(void) {
 	for (size_t y = 0; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
 			const size_t index = y * VGA_WIDTH + x;
-			terminal_buffer[index] = vga_entry(' ', terminal_color);
+			terminal_buffer[index] = vga_entry(0, terminal_color);
 		}
 	}
 }
@@ -56,6 +56,13 @@ PUB void terminal_write(const char* data, size_t size) {
             if(++terminal_row == VGA_HEIGHT) {
                 terminal_row = 0;
             }
+                    }
+        else if(c == '\b') {
+            if(--terminal_column == VGA_WIDTH) {
+                terminal_column = 0;
+            }
+            terminal_putentryat(0, terminal_color, terminal_column, terminal_row);
+
         }
         else {
             terminal_putchar(c);
