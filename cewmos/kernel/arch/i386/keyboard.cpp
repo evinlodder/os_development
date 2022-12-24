@@ -218,7 +218,7 @@ void kernel::keyboard::keyboard_manager::handle_irq(uint8_t scancode) {
         }
         else if(scancode == (num_lock)) {
             ::nums_lock_down = !::nums_lock_down;
-            handle_special(::nums_lock_down, 4)
+            handle_special(::nums_lock_down, 4);
         }
         else if(scancode == (scroll_lock)) {
             ::scroll_lock_down = !::scroll_lock_down;

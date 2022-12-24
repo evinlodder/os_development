@@ -15,7 +15,8 @@ export LIBDIR=$EXEC_PREFIX/lib
 export INCLUDEDIR=$PREFIX/include
 
 export CFLAGS='-O2 -g'
-export CPPFLAGS=''
+export CPPFLAGS="-I$(pwd)/stdlib/inc"
+#-fno-rtti -fno-exceptions"
 
 # Configure the cross-compiler to use the desired system root.
 export SYSROOT="$(pwd)/sysroot"
@@ -26,3 +27,6 @@ export CC="$CC --sysroot=$SYSROOT"
 if echo "$HOST" | grep -Eq -- '-elf($|-)'; then
   export CC="$CC -isystem=$INCLUDEDIR"
 fi
+
+
+
