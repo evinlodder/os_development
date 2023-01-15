@@ -15,8 +15,8 @@
 	movl %cr3, %ecx
 	movl %ecx, %cr3
 
-	# Set up the stack.
-	mov $stack_top, %esp
+
+
 
 	# clear interrupts for gdt
 	cli
@@ -46,6 +46,8 @@
 #					      #
 	# Set up system, things like IDT
 
+	# Set up the stack.
+	#mov $stack_top, %esp
 
 	call system_setup
 
@@ -55,3 +57,4 @@
 	# Infinite loop if the system has nothing more to do.
 1:	hlt
 	jmp 1b
+

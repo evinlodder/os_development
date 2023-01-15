@@ -3,11 +3,14 @@
 #include <kernel/hio.h>
 #include <kernel/pic.h>
 
-void kernel::panic::panic(const char* message, const char* code, bool halt) {
+void kernel::panic::panic(const char* message, const char* code, bool halt, uint32_t cr2) {
     clear_screen();
     printf("<SYSTEM ERROR>\n");
+    if(cr2 != 0) {
+        printf("Page fault at 0x%x\n", cr2);
+    }
     printf("A %s error has occured.\n", (halt ? "fatal" : "non-fatal"));
-    printf("%s %s", code, message);
+    printf("%s %s\n", code, message);
 
     if(halt) {
         printf("System halted.");

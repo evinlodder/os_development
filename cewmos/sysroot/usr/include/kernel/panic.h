@@ -7,7 +7,7 @@ namespace kernel { namespace panic {
 #endif //__cplusplus
 
 
-void panic(const char* message, const char* code, bool halt);
+void panic(const char* message, const char* code, bool halt, uint32_t cr2 = 0);
 
 
 #ifdef __cplusplus

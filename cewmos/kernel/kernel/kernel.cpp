@@ -3,11 +3,22 @@
 #include <kernel/tty.h>
 #include <dominos/map.h>
 #include <initializer_list>
+#include "multiboot.h"
 
+
+extern "C" uint32_t _kernel_start;
+extern "C" uint32_t _kernel_end;
+
+extern "C" uint32_t _new_kernel_start;
 
 EXTERN void kernel_main(VOID) {
-   }
+   
+    char* test_string = (char*) kernel::kmalloc(sizeof(char) * 4);
+    test_string = "nut";
+    printf(test_string);
 
+
+}
 EXTERN void system_setup(VOID) {
     terminal_initialize();
     //set up IDT
@@ -26,3 +37,5 @@ EXTERN void system_setup(VOID) {
 
     kernel::system::enable_interrupts(true);
 }
+
+

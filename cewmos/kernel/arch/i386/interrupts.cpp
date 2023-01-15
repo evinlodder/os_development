@@ -104,8 +104,7 @@ EXTERN void int_13(VOID) {
     panic("General protection", "#GP", false);
 }
 EXTERN void int_14(uint32_t cr2) {
-    panic("Page fault", "#PF", true);
-    printf("Tried to access address %X", cr2);
+    panic("Page fault", "#PF", true, cr2);
 }
 EXTERN void int_16(VOID) {
     panic("Math fault", "#MF", false);
