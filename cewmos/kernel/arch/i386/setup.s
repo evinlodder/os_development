@@ -39,6 +39,12 @@ boot_page_table1:
 _start:
     mov $stack_top, %esp
 
+    sti
+    push %eax
+    push %ebx
+
+    call setup_mem
+
 	# Physical address of boot_page_table1.
 	# TODO: I recall seeing some assembly that used a macro to do the
 	#       conversions to and from physical. Maybe this should be done in this
@@ -92,9 +98,9 @@ _start:
 	movl $(boot_page_directory - 0xC0000000), %ecx
 	movl %ecx, %cr3
 
-	# Enable paging and the write-protect bit.
+	# Enable paging and NOT the write-protect bit.
 	movl %cr0, %ecx
-	orl $0x80010000, %ecx
+	orl $0x80000000, %ecx
 	movl %ecx, %cr0
 
 	# Jump to higher half with an absolute jump.

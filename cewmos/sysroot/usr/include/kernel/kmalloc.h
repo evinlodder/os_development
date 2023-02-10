@@ -8,6 +8,7 @@ namespace kmalloc {
 }
 
 namespace kernel {
+    void kfree(void* ptr);
     uint32_t kmalloc_aligned(uint32_t size);
     uint32_t kmalloc_phys(uint32_t size, uint32_t* phys);
     uint32_t kmalloc_ap(uint32_t size, uint32_t* phys);

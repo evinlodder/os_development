@@ -11,13 +11,45 @@ extern "C" uint32_t _kernel_end;
 
 extern "C" uint32_t _new_kernel_start;
 
+EXTERN void setup_mem(multiboot_info_t* mbd, uint32_t magic) {
+    asm volatile("cli");
+    asm volatile("hlt");
+}
+
 EXTERN void kernel_main(VOID) {
-   
-    char* test_string = (char*) kernel::kmalloc(sizeof(char) * 4);
-    test_string = "nut";
-    printf(test_string);
+    char* first = (char*) kernel::kmalloc(5);
+    printf("first location: 0x%x\n", (uint32_t)first);
+    char* second = (char*) kernel::kmalloc(5);
+    char* third = (char*) kernel::kmalloc(5);
+    char* fourth = (char*) kernel::kmalloc(5);
+    char* fifth = (char*) kernel::kmalloc(5);
+    char* sixth = (char*) kernel::kmalloc(5);
+    char* seventh = (char*) kernel::kmalloc(5);
+    char* eighth = (char*) kernel::kmalloc(5);
+    char* ninth = (char*) kernel::kmalloc(5);
+    char* tenth = (char*) kernel::kmalloc(5);
+    char* eleventh = (char*) kernel::kmalloc(5);
+    char* twelfth = (char*) kernel::kmalloc(5);
+    char* thirteenth = (char*) kernel::kmalloc(5);
+    char* fourteenth = (char*) kernel::kmalloc(5);
+    char* fifteenth = (char*) kernel::kmalloc(5);
+    printf("fifteenth location: 0x%x\n", (uint32_t)fifteenth);
 
-
+    kernel::kfree(first);
+    kernel::kfree(second);
+    kernel::kfree(third);
+    kernel::kfree(fourth);
+    kernel::kfree(fifth);
+    kernel::kfree(sixth);
+    kernel::kfree(seventh);
+    kernel::kfree(eighth);
+    kernel::kfree(ninth);
+    kernel::kfree(tenth);
+    kernel::kfree(eleventh);
+    kernel::kfree(twelfth);
+    kernel::kfree(thirteenth);
+    kernel::kfree(fourteenth);
+    kernel::kfree(fifteenth);
 }
 EXTERN void system_setup(VOID) {
     terminal_initialize();
