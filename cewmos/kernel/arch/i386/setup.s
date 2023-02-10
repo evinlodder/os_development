@@ -43,6 +43,7 @@ _start:
     push %eax
     push %ebx
 
+    pushl $52
     call setup_mem
 
 	# Physical address of boot_page_table1.
