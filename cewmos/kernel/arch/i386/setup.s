@@ -38,14 +38,7 @@ boot_page_table1:
 .type _start, @function
 _start:
     mov $stack_top, %esp
-
-    sti
-    push %eax
-    push %ebx
-
-    pushl $52
-    call setup_mem
-
+    call test
 	# Physical address of boot_page_table1.
 	# TODO: I recall seeing some assembly that used a macro to do the
 	#       conversions to and from physical. Maybe this should be done in this

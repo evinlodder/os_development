@@ -7,8 +7,7 @@
 
 4:
 	# At this point, paging is fully set up and enabled.
-
-	# Unmap the identity mapping as it is now unnecessary.
+    # Unmap the identity mapping as it is now unnecessary.
 	movl $0, boot_page_directory + 0
 
 	# Reload crc3 to force a TLB flush so the changes to take effect.
@@ -16,7 +15,8 @@
 	movl %ecx, %cr3
 
 
-
+    # we want to preserve the value of eax
+    mov %eax, %ecx
 
 	# clear interrupts for gdt
 	cli
@@ -41,15 +41,19 @@
 	mov %ax, %fs
 	mov %ax, %gs
 
+    # restore eax and push values onto stack for mem setup
+    mov %ecx, %eax
+    pushl %eax
+    pushl %ebx
+
 #					      #
 # GDT IS SET UP, WE ARE NOW IN PROTECTED MODE #
 #					      #
 	# Set up system, things like IDT
+    call system_setup
 
-	# Set up the stack.
-	#mov $stack_top, %esp
-
-	call system_setup
+    # get GRUBs memory map
+    call setup_mem
 
 	# Enter the high-level kernel.
 	call kernel_main

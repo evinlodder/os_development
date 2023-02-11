@@ -59,6 +59,7 @@ EXTERN void kernel::interrupts::load_interrupts(VOID) {
     set_interrupt(48, _int48, selector, PRESENT | RING_2 | INT_GATE_32);
 }
 
+
 using namespace kernel::interrupts;
 using namespace kernel::panic;
 EXTERN void int_00(VOID) {
@@ -103,8 +104,8 @@ EXTERN void int_12(VOID) {
 EXTERN void int_13(VOID) {
     panic("General protection", "#GP", false);
 }
-EXTERN void int_14(uint32_t cr2) {
-    panic("Page fault", "#PF", true, cr2);
+EXTERN void int_14(uint32_t cr2, registers_t regs, uint32_t err_code) {
+    panic("Page fault", "#PF", true, cr2, err_code);
 }
 EXTERN void int_16(VOID) {
     panic("Math fault", "#MF", false);

@@ -10,10 +10,29 @@ extern "C" uint32_t _kernel_start;
 extern "C" uint32_t _kernel_end;
 
 extern "C" uint32_t _new_kernel_start;
-
+EXTERN void test(VOID){}
 EXTERN void setup_mem(multiboot_info_t* mbd, uint32_t magic) {
-    asm volatile("cli");
-    asm volatile("hlt");
+    //check magic
+    if(magic != MULTIBOOT_BOOTLOADER_MAGIC) {
+        printf("magic is wrong!\n");
+        printf("magic: 0x%x", magic);
+        while(true) {
+            asm("cli");
+            asm("hlt");
+        }
+    }
+
+    //check mbd
+    if(!((mbd->flags >> 6) & 0x1)) {
+        printf("invalid memory map!");
+        while(true) {
+            asm("cli");
+            asm("hlt");
+        }
+    }
+    printf("valid memory map and magic number!\n");
+    printf("mbd location: 0x%x\n", mbd);
+    printf("magic: 0x%x", magic);
 }
 
 EXTERN void kernel_main(VOID) {
