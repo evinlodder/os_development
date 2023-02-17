@@ -27,7 +27,8 @@ boot_page_directory:
 	.skip 4096
 boot_page_table1:
 	.skip 4096
-
+#mb_info:
+#	.skip 120
 
 # Further page tables may be required if the kernel grows beyond 3 MiB.
 
@@ -49,8 +50,8 @@ _start:
 	#       1 MiB as it can be generally useful, and there's no need to
 	#       specially map the VGA buffer.
 	movl $0, %esi
-	# Map 1022 pages. 1023rd will be multiboot info and 1024th will be the VGA text buffer.
-	movl $1022, %ecx
+	# Map 1023 pages. 1024th will be the VGA text buffer.
+	movl $1023, %ecx
 
 1:
 	# Only map the kernel.
@@ -77,10 +78,6 @@ _start:
 	# Map VGA video memory to 0xC03FF000 as "present, writable".
 	movl $(0x000B8000 | 0x003), boot_page_table1 - 0xC0000000 + 1023 * 4
 
-    	# map mbinfo to 0xC03FE000 as present & writable
-    	orl $0x003, %ebx
-    	movl %ebx, boot_page_table1 - 0xC0000000 + 1022 * 4
-
 	# The page table is used at both page directory entry 0 (virtually from 0x0
 	# to 0x3FFFFF) (thus identity mapping the kernel) and page directory entry
 	# 768 (virtually from 0xC0000000 to 0xC03FFFFF) (thus mapping it in the
@@ -98,7 +95,7 @@ _start:
 
 	# Enable paging and the write-protect bit.
 	movl %cr0, %ecx
-	orl $0x80010001, %ecx
+	orl $0x80010000, %ecx
 	movl %ecx, %cr0
 
 	# Jump to higher half with an absolute jump.

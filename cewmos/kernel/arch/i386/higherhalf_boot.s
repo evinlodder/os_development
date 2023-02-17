@@ -45,20 +45,19 @@
 
     # restore eax and push values onto stack for mem setup
     mov %ecx, %eax
+    addl $0xC0000000, %ebx
 
-    movl %cr3, %ecx
-    pushl %ecx
     pushl %eax
-    pushl $0xC03FE000 #yes i know its hard coded
+    pushl %ebx
 
 #					      #
 # GDT IS SET UP, WE ARE NOW IN PROTECTED MODE #
 #					      #
 	# Set up system, things like IDT
-    	call system_setup
+    call system_setup
 
-    	# get GRUBs memory map
-    	call setup_mem
+    # get GRUBs memory map
+    call setup_mem
 
 	# Enter the high-level kernel.
 	call kernel_main

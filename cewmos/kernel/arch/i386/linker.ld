@@ -1,5 +1,7 @@
 ENTRY (_start)
 
+kernel_addr_offset = 0xC0000000;
+
 SECTIONS
 {
         . = 0x00100000;
@@ -16,22 +18,22 @@ SECTIONS
            *(.multiboot.text)
        }
 
-	. += 0xC0000000;
+	. += kernel_addr_offset;
 	/* Add a symbol that indicates the start address of the kernel. */
 	_new_kernel_start = .;
-	.text ALIGN (4K) : AT (ADDR (.text) - 0xC0000000)
+	.text ALIGN (4K) : AT (ADDR (.text) - kernel_addr_offset)
 	{
 		*(.text)
 	}
-	.rodata ALIGN (4K) : AT (ADDR (.rodata) - 0xC0000000)
+	.rodata ALIGN (4K) : AT (ADDR (.rodata) - kernel_addr_offset)
 	{
 		*(.rodata)
 	}
-	.data ALIGN (4K) : AT (ADDR (.data) - 0xC0000000)
+	.data ALIGN (4K) : AT (ADDR (.data) - kernel_addr_offset)
 	{
 		*(.data)
 	}
-	.bss ALIGN (4K) : AT (ADDR (.bss) - 0xC0000000)
+	.bss ALIGN (4K) : AT (ADDR (.bss) - kernel_addr_offset)
 	{
 		*(COMMON)
 		*(.bss)
