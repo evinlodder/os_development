@@ -156,6 +156,8 @@ static uint32_t find_header_alloc_spot(size_t size) {
 
 //
 
+static uint32_t end_of_kernel_mem = 0xC03FDFFF; // this is the end of the kernel's mapped memory
+
 static uint32_t kmalloc_impl(uint32_t size, bool aligned, uint32_t* phys) {
     if(!kmalloc::enabled) {
         kernel::panic::panic("kmalloc is disabled", "", true);
@@ -163,11 +165,24 @@ static uint32_t kmalloc_impl(uint32_t size, bool aligned, uint32_t* phys) {
 
     if(aligned && (placement_address & 0xfffff000)) {
         //if address isn't page aligned align it
+        if((placement_address & 0xfffff000) + 0x1000 > end_of_kernel_mem) {
+            kernel::panic::panic("ALLOCATING ALIGNED MEMORY WOULD OVERRIDE MBINFO", "", true);
+        }
         placement_address &= 0xfffff000; //set to current page
         placement_address += 0x1000; //advance one page
+
+        //NOTE: I HAVEN'T PROPERLY IMPLEMENTED BEHAVIOR IF ALIGNED. I WILL GET TO THAT IF I NEED TO.
     }
 
     size_t alloc_spot = find_header_alloc_spot(size);
+
+    if(alloc_spot == placement_address) {
+        //check if we can fit memory
+        if(alloc_spot + sizeof(kmalloc_meta) + size > end_of_kernel_mem) {
+            kernel::panic::panic("ALLOCATING MEMORY WOULD OVVERIDE MBINFO", "", true);
+        }
+    }
+
     kmalloc_meta* header = (kmalloc_meta*) alloc_spot;
 
     header->size = size;

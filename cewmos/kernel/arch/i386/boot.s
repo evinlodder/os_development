@@ -46,8 +46,8 @@
     # restore eax and push values onto stack for mem setup
     mov %ecx, %eax
 
-    movl %cr3, %ecx
-    pushl %ecx
+    pushl $boot_page_table1
+    pushl $boot_page_directory
     pushl %eax
     pushl $0xC03FE000 #yes i know its hard coded
 

@@ -12,18 +12,25 @@ extern "C" uint32_t _kernel_end;
 extern "C" uint32_t _new_kernel_start;
 extern "C" uint32_t* kernel_addr_offset;
 
-void print_mbinfo(multiboot_info_t* mbd) {
+static void print_mbinfo(multiboot_info_t* mbd) {
     printf("flags: %b\n", mbd->flags);
     printf("mem_lower: 0x%x\n", mbd->mem_lower);
     printf("mem_upper: 0x%x\n", mbd->mem_upper);
+    printf("ram size: %d MB\n", mbd->mem_upper / 1024 + 2);
+    printf("paging size: %d\n", (mbd->mem_upper * 1024) / 4096 + 30000);
     printf("mods_count: %d\n", mbd->mods_count);
     printf("mods_addr: 0x%x\n", mbd->mods_addr);
     printf("mmap_length: %d\n", mbd->mmap_length);
     printf("mmap_addr: 0x%x\n", mbd->mmap_addr);
 }
 
-EXTERN void setup_mem(multiboot_info_t* mbd, uint32_t magic, uint32_t* pd) {
+EXTERN void setup_mem(multiboot_info_t* mbd, uint32_t magic, uint32_t* pd, uint32_t* pt_one) {
     //check magic
+    printf("pd: 0x%x\n", (uint32_t)pd);
+    printf("pt_one: 0x%x\n", (uint32_t)pt_one);
+    printf("pd[768]: 0b%b\n", (uint32_t)pd[768]);
+    printf("pt_one[1022]: 0b%b\n", (uint32_t)pt_one[1022]);
+    printf("pd[768] addr: 0x%x\n", ((uint32_t)pd[768]) & 0xFFFFF000);
     if(magic != MULTIBOOT_BOOTLOADER_MAGIC) {
         printf("magic is wrong!\n");
         printf("magic: 0x%x", magic);
@@ -79,7 +86,7 @@ EXTERN void setup_mem(multiboot_info_t* mbd, uint32_t magic, uint32_t* pd) {
 }
 
 EXTERN void kernel_main(VOID) {
-
+    printf("new kernel start: %x", &_new_kernel_start);
 
 }
 EXTERN void system_setup(VOID) {

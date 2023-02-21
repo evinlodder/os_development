@@ -77,9 +77,9 @@ _start:
 	# Map VGA video memory to 0xC03FF000 as "present, writable".
 	movl $(0x000B8000 | 0x003), boot_page_table1 - 0xC0000000 + 1023 * 4
 
-    	# map mbinfo to 0xC03FE000 as present & writable
-    	orl $0x003, %ebx
-    	movl %ebx, boot_page_table1 - 0xC0000000 + 1022 * 4
+	# map mbinfo to 0xC03FE000 as present & writable
+    orl $0x003, %ebx
+    movl %ebx, boot_page_table1 - 0xC0000000 + 1022 * 4
 
 	# The page table is used at both page directory entry 0 (virtually from 0x0
 	# to 0x3FFFFF) (thus identity mapping the kernel) and page directory entry
@@ -96,9 +96,9 @@ _start:
 	movl $(boot_page_directory - 0xC0000000), %ecx
 	movl %ecx, %cr3
 
-	# Enable paging and the write-protect bit.
+	# Enable paging and not the write-protect bit.
 	movl %cr0, %ecx
-	orl $0x80010001, %ecx
+	orl $0x80000001, %ecx
 	movl %ecx, %cr0
 
 	# Jump to higher half with an absolute jump.
