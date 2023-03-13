@@ -11,6 +11,7 @@
 #include <kernel/pic.h>
 #include <kernel/pit.h>
 #include <kernel/keyboard.h>
+#include <kernel/paging.h>
 #include <kernel/kmalloc.h>
 
 #ifdef __cplusplus

@@ -132,21 +132,22 @@ void kernel::kfree(void* ptr) {
 }
 
 
-static uint32_t find_header_alloc_spot(size_t size) {
+static uint32_t find_header_alloc_spot(size_t size, bool aligned) {
     size_t i{};
 
     kmalloc_meta* iter = free_list[i];
     if(!iter) {
-        return placement_address;
+        return aligned ? (placement_address & 0xFFFFF000) + 0x1000 : placement_address;
     }
 
+    auto is_aligned = [&](uint32_t addr) { return aligned ? (addr & 0xFFF) == 0 : true; };
 
     if(allocated_blocks == 0) //if there are no allocated blocks return beginning of memory
         return mem_beginning;
-    while(iter->size < size) {
-        iter = free_list[i++];
+    while(iter->size < size || !is_aligned((uint32_t)(iter) + sizeof(kmalloc_meta))) {
+        iter = free_list[++i];
         if(!iter) {
-            return placement_address;
+            return aligned ? (placement_address & 0xfffff000) + 0x1000 : placement_address;
         }
     }
     //if we've found a suitable spot, remove freed header from list and return its location
@@ -163,18 +164,19 @@ static uint32_t kmalloc_impl(uint32_t size, bool aligned, uint32_t* phys) {
         kernel::panic::panic("kmalloc is disabled", "", true);
     }
 
-    if(aligned && (placement_address & 0xfffff000)) {
+    if(aligned && (placement_address & 0xfff)) {
         //if address isn't page aligned align it
         if((placement_address & 0xfffff000) + 0x1000 > end_of_kernel_mem) {
             kernel::panic::panic("ALLOCATING ALIGNED MEMORY WOULD OVERRIDE MBINFO", "", true);
         }
+
         placement_address &= 0xfffff000; //set to current page
         placement_address += 0x1000; //advance one page
 
         //NOTE: I HAVEN'T PROPERLY IMPLEMENTED BEHAVIOR IF ALIGNED. I WILL GET TO THAT IF I NEED TO.
     }
 
-    size_t alloc_spot = find_header_alloc_spot(size);
+    size_t alloc_spot = find_header_alloc_spot(size, aligned);
 
     if(alloc_spot == placement_address) {
         //check if we can fit memory

@@ -26,6 +26,9 @@ static void print_mbinfo(multiboot_info_t* mbd) {
 
 EXTERN void setup_mem(multiboot_info_t* mbd, uint32_t magic, uint32_t* pd, uint32_t* pt_one) {
     //check magic
+    kernel::init_paging((uintptr_t)pd, (uintptr_t)pt_one, 768);
+
+    printf("calculated pd[768]: 0x%x", kernel::get_table_virt(768));
     printf("pd: 0x%x\n", (uint32_t)pd);
     printf("pt_one: 0x%x\n", (uint32_t)pt_one);
     printf("pd[768]: 0b%b\n", (uint32_t)pd[768]);
@@ -55,6 +58,7 @@ EXTERN void setup_mem(multiboot_info_t* mbd, uint32_t magic, uint32_t* pd, uint3
     printf("\n");
     //while(1) asm("hlt");
     mbd->mmap_addr = (uint32_t)mbd + (mbd->mmap_addr - 0x10000);
+    uint32_t fourk = 0x400000 / 1024;
     for(size_t i{}; i < mbd->mmap_length; i += sizeof(multiboot_memory_map_t)) {
         auto mmap = (multiboot_memory_map_t*)(mbd->mmap_addr + i);
         uint64_t addr = ((uint64_t)mmap->addr_high << 32) + mmap->addr_low;
@@ -66,6 +70,7 @@ EXTERN void setup_mem(multiboot_info_t* mbd, uint32_t magic, uint32_t* pd, uint3
         switch(mmap->type) {
             case MULTIBOOT_MEMORY_AVAILABLE:
                 printf("AVAILABLE!\n");
+                kernel::map(addr, addr + fourk, 0, 0 + fourk, {kernel::table_flags::present, kernel::table_flags::writable}, {kernel::directory_flags::present, kernel::directory_flags::writable});
                 break;
             case MULTIBOOT_MEMORY_RESERVED:
                 printf("reserved\n");
