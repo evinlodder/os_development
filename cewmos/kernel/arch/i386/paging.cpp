@@ -190,6 +190,7 @@ void kernel::map(uintptr_t phys_start, uintptr_t phys_end, uintptr_t virt_start,
     auto d_idx {v_to_dir_idx(virt_addr)};
     while(virt_addr < virt_end && d_idx < kernel::PD_SIZE) {
         if(!directory->table_exists(d_idx)) {
+            volatile int test1 = 0;
             auto addr = (page_table*) kernel::kmalloc_aligned(sizeof(page_table));
             directory->map_table(d_idx, directory->virt_to_phys((uintptr_t)addr), dflags);
             tables[d_idx] = addr;

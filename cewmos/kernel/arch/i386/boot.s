@@ -50,6 +50,7 @@
     pushl $boot_page_directory
     pushl %eax
     pushl $0xC03FE000 #yes i know its hard coded
+    pushl $boot_fixed_allocbuffer
 
 #					      #
 # GDT IS SET UP, WE ARE NOW IN PROTECTED MODE #

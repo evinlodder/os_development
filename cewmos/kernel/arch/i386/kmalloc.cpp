@@ -100,11 +100,11 @@ static void compress_memory() {
         if(!iter->next)
             break;
 
-        if(iter->next != most_compressed_next) { //if (actual next != most compressed next)
+        if(iter->next != most_compressed_next && (((uint32_t)iter->next + sizeof(kmalloc_meta)) & 0xFFF)) { //if (actual next != most compressed next)
             memmove(most_compressed_next, iter->next, iter->next->size + sizeof(kmalloc_meta)); //using memmove instead of memcpy because pointers are almost guranteed to overlap
+                                                                                         iter->next = most_compressed_next;
         }
 
-        iter->next = most_compressed_next;
         iter = iter->next;
     }
 
@@ -137,17 +137,16 @@ static uint32_t find_header_alloc_spot(size_t size, bool aligned) {
 
     kmalloc_meta* iter = free_list[i];
     if(!iter) {
-        return aligned ? (placement_address & 0xFFFFF000) + 0x1000 : placement_address;
+        return placement_address;
     }
 
     auto is_aligned = [&](uint32_t addr) { return aligned ? (addr & 0xFFF) == 0 : true; };
-
     if(allocated_blocks == 0) //if there are no allocated blocks return beginning of memory
         return mem_beginning;
     while(iter->size < size || !is_aligned((uint32_t)(iter) + sizeof(kmalloc_meta))) {
         iter = free_list[++i];
         if(!iter) {
-            return aligned ? (placement_address & 0xfffff000) + 0x1000 : placement_address;
+            return placement_address;
         }
     }
     //if we've found a suitable spot, remove freed header from list and return its location
@@ -164,35 +163,39 @@ static uint32_t kmalloc_impl(uint32_t size, bool aligned, uint32_t* phys) {
         kernel::panic::panic("kmalloc is disabled", "", true);
     }
 
-    if(aligned && (placement_address & 0xfff)) {
-        //if address isn't page aligned align it
+    if(aligned) {
         if((placement_address & 0xfffff000) + 0x1000 > end_of_kernel_mem) {
             kernel::panic::panic("ALLOCATING ALIGNED MEMORY WOULD OVERRIDE MBINFO", "", true);
         }
 
-        placement_address &= 0xfffff000; //set to current page
-        placement_address += 0x1000; //advance one page
+        uint32_t next_page = (placement_address & 0xfffff000) + 0x1000;
+        if(placement_address > next_page - sizeof(kmalloc_meta)) {
+            next_page += 0x1000;
+            if(next_page > end_of_kernel_mem) {
+                kernel::panic::panic("COULDN'T FIND ALIGNED SPOT FOR DATA", "", true);
+            }
+        }
+
+        placement_address = next_page - sizeof(kmalloc_meta); //advance to next page
 
         //NOTE: I HAVEN'T PROPERLY IMPLEMENTED BEHAVIOR IF ALIGNED. I WILL GET TO THAT IF I NEED TO.
     }
 
     size_t alloc_spot = find_header_alloc_spot(size, aligned);
-
     if(alloc_spot == placement_address) {
         //check if we can fit memory
-        if(alloc_spot + sizeof(kmalloc_meta) + size > end_of_kernel_mem) {
+        if((alloc_spot + sizeof(kmalloc_meta) + size) > end_of_kernel_mem) {
             kernel::panic::panic("ALLOCATING MEMORY WOULD OVVERIDE MBINFO", "", true);
         }
     }
-
     kmalloc_meta* header = (kmalloc_meta*) alloc_spot;
-
     header->size = size;
     header->next = nullptr;
+
     ++allocated_blocks;
 
     if(alloc_spot == placement_address) { //if there were no suitable free spots
-        if((uint32_t)header == mem_beginning) {
+        if(allocated_blocks == 1) {
             header->last = nullptr;
         }
         else {

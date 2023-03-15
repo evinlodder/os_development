@@ -27,6 +27,8 @@ boot_page_directory:
 	.skip 4096
 boot_page_table1:
 	.skip 4096
+boot_fixed_allocbuffer:
+	.skip 1048576 //1 MiB for fixed buffer allocation
 
 
 # Further page tables may be required if the kernel grows beyond 3 MiB.
@@ -53,7 +55,7 @@ _start:
 	movl $1022, %ecx
 
 1:
-	# Only map the kernel.
+	# Map entire table
 	cmpl $_kernel_start, %esi
 	jl 2f
 	cmpl $(_kernel_end - 0xC0000000), %esi
