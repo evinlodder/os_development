@@ -37,25 +37,6 @@ static void insert_header(kmalloc_meta* header) {
     }
 
     free_list[i] = header; //then place the value in
-   /* kmalloc_meta* iter {free_list_head};
-    if(!iter) {
-        header->last = nullptr;
-        header->next = nullptr;
-        free_list_head = header;
-        return;
-    }
-    while((uint32_t)iter < (uint32_t)header) {
-        if(!iter->next) //break loop if it's last header in list
-            break;
-        iter = iter->next;
-    }
-    if(iter->last)
-        iter->last->next = header; //if iter isn't head, connect previous with header
-    else
-        free_list_head = header; //otherwise make header the head
-    header->last = iter->last;
-    iter->last = header;
-    header->next = iter;*/
 }
 
 static void remove_header(kmalloc_meta* header) {

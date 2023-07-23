@@ -15,7 +15,7 @@ export LIBDIR=$EXEC_PREFIX/lib
 export INCLUDEDIR=$PREFIX/include
 
 export CFLAGS='-O2 -g'
-export CPPFLAGS="-I$(pwd)/stdlib/inc"
+export CPPFLAGS="-I$(pwd)/stdlib/inc -I$(pwd)/helperlib/inc"
 #-fno-rtti -fno-exceptions"
 
 # Configure the cross-compiler to use the desired system root.
