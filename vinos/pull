@@ -1,0 +1,6 @@
+#!/bin/sh
+
+cd ~/os_development
+git rm -r --cached .
+git reset --hard
+git pull

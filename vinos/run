@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+. ./iso.sh
+
+if [ "$1" = "gdb" ]; then
+    FLAGS="-s -S"
+else
+    FLAGS=""
+fi
+
+qemu-system-$(./target-triplet-to-arch.sh $HOST) -cdrom vinos.iso -d guest_errors,page,cpu_reset -D ~/output.txt $FLAGS -no-reboot
