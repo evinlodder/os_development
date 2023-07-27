@@ -22,8 +22,8 @@ void kernel::pit::timer_handler() {
     // }
 }
 
-void kernel::pit::sleep_t(int ticks) {
-    unsigned long eticks {timer_ticks + ticks};
+void kernel::pit::sleep_t(volatile int ticks) {
+    volatile unsigned long eticks {timer_ticks + ticks};
     while(timer_ticks < eticks) {
         asm("hlt");
     }
@@ -34,7 +34,7 @@ void kernel::pit::sleep_s(int s) {
 }
 
 void kernel::pit::sleep_ms(int ms) {
-    kernel::pit::sleep_t((ms / 1000) * (hz));
+    kernel::pit::sleep_t((ms * hz) / 1000);
 }
 
 void kernel::pit::timer_install(int hz) {

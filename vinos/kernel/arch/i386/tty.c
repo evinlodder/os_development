@@ -38,13 +38,37 @@ void terminal_putentryat(unsigned char c, uint8_t color, size_t x, size_t y) {
 	terminal_buffer[index] = vga_entry(c, color);
 }
 
+void terminal_scroll() {
+    //we need to move the data back one then clear the last line
+    uint16_t tmp[(VGA_HEIGHT - 1) * VGA_WIDTH];
+    //initialize temporary buffer to data
+    for(size_t y = 1; y < VGA_HEIGHT; y++) {
+		for (size_t x = 0; x < VGA_WIDTH; x++) {
+			const size_t new_index = (y - 1) * VGA_WIDTH + x;
+            const size_t old_index = y * VGA_WIDTH + x;
+
+			tmp[new_index] = terminal_buffer[old_index];
+		}
+	}
+    //set terminal data to buffer
+    for(size_t i = 0; i < (VGA_HEIGHT - 1) * VGA_WIDTH; ++i) {
+         terminal_buffer[i] = tmp[i];
+    }
+     //clear last row
+     for(size_t i = 0; i < VGA_WIDTH; i++) {
+        terminal_putentryat(0, terminal_color, i, VGA_HEIGHT - 1);
+     }
+}
+
 PUB void terminal_putchar(char c) {
 	unsigned char uc = c;
 	terminal_putentryat(uc, terminal_color, terminal_column, terminal_row);
-	if (++terminal_column == VGA_WIDTH) {
+	if(++terminal_column == VGA_WIDTH) {
 		terminal_column = 0;
-		if (++terminal_row == VGA_HEIGHT)
-			terminal_row = 0;
+		if (++terminal_row == VGA_HEIGHT) {
+			terminal_scroll();
+            terminal_row--;
+        }
 	}
 }
 
@@ -54,7 +78,8 @@ PUB void terminal_write(const char* data, size_t size) {
         if(c == '\n') {
             terminal_column = 0;
             if(++terminal_row == VGA_HEIGHT) {
-                terminal_row = 0;
+                terminal_scroll();
+                terminal_row--;
             }
                     }
         else if(c == '\b') {
@@ -79,7 +104,9 @@ PUB void cls(void) {
     for (size_t y = 0; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
 			const size_t index = y * VGA_WIDTH + x;
-			terminal_buffer[index] = vga_entry(' ', terminal_color);
+			terminal_buffer[index] = vga_entry(0, terminal_color);
 		}
 	}
+    terminal_column = 0;
+    terminal_row = 0;
 }

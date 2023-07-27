@@ -174,6 +174,8 @@ static void check_params(uintptr_t ps, uintptr_t pe, uintptr_t vs, uintptr_t ve)
     if((pe - ps) != (ve - vs)) panic("ranges aren't equal!", "", true);
 }
 
+#include <stdio.h>
+
 void kernel::map(uintptr_t phys_start, uintptr_t phys_end, uintptr_t virt_start, uintptr_t virt_end, std::initializer_list<kernel::table_flags> tflags, std::initializer_list<kernel::directory_flags> dflags) {
 
     check_params(phys_start, phys_end, virt_start, virt_end);
@@ -196,8 +198,10 @@ void kernel::map(uintptr_t phys_start, uintptr_t phys_end, uintptr_t virt_start,
         phys_addr = phys_next;
         virt_next = min(virt_end, virt_addr + PAGE_SIZE_4K);
         phys_next = min(phys_end, phys_addr + PAGE_SIZE_4K);
-        ++d_idx;
+        d_idx = v_to_dir_idx(virt_addr);
     }
+    printf(" last virt addr to be mapped on this call: 0x%x\n", virt_addr);
+    printf(" last pd idx to be used on this call: %d\n", v_to_dir_idx(virt_addr));
 }
 
 uintptr_t kernel::get_table_virt(size_t idx) {

@@ -155,7 +155,7 @@ static uint32_t kmalloc_impl(uint32_t size, bool aligned, uint32_t* phys) {
 
     if(aligned) {
         if((placement_address & 0xfffff000) + 0x1000 > end_of_kernel_mem) {
-            kernel::panic::panic("ALLOCATING ALIGNED MEMORY WOULD OVERRIDE MBINFO", "", true);
+            kernel::panic::panic("ALLOCATING ADDR WOULD OVERFLOW", "", true);
         }
 
         uint32_t next_page = (placement_address & 0xfffff000) + 0x1000;
